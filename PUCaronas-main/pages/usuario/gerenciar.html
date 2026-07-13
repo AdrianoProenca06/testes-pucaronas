@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Aprovação - PUCaronas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #8b0000 0%, #2b0000 100%);
+            background-attachment: fixed;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            color: white;
+        }
+        .glass-container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 40px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            color: #333;
+        }
+        .table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .table thead {
+            background-color: darkred;
+            color: white;
+        }
+        .table th {
+            border: none;
+            padding: 15px;
+        }
+        .table td {
+            vertical-align: middle;
+            padding: 12px;
+        }
+        .img-doc {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .img-doc:hover {
+            transform: scale(1.5);
+        }
+        .btn-doc {
+            background-color: rgba(139, 0, 0, 0.1);
+            color: darkred;
+            font-weight: 600;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    
+
+<nav class="navbar navbar-expand-lg" style="background-color: darkred;">
+  <a class="navbar-brand text-white fw-bold" style="margin-left: 1vw;" href="#">PUCaronas</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link text-white" href="../caronas/logado_home.html">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" href="../caronas/caronas.html">Caronas</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" href="login.html" onclick="sessionStorage.clear()">Sair</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="container">
+    <div class="glass-container">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <h2 class="fw-bold m-0 text-dark">Gerenciar Usuários</h2>
+            <a href="../caronas/logado_home.html" class="btn btn-outline-dark btn-sm rounded-pill px-4">Voltar ao Início</a>
+        </div>
+        
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Cargo</th>
+                        <th>Status</th>
+                        <th>Doc</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-usuarios">
+                    <!-- users inseridos-->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal usuario aprovado -->
+<div class="modal fade" id="modalAprovado" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header" style="background-color: darkred;">
+        <h5 class="modal-title text-white fw-bold">&#10003; Usuário Aprovado</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body text-center py-4">
+        <div style="font-size: 3rem; color: #198754;">&#10003;</div>
+        <p class="mt-2 mb-0 text-dark fw-semibold">Usuário aprovado com sucesso!</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success rounded-pill px-4" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal confirma deleção -->
+<div class="modal fade" id="modalConfirmarDeletar" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title fw-bold">Confirmar Exclusão</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body text-center py-4">
+        <div style="font-size: 3rem;">&#9888;</div>
+        <p class="mt-2 mb-0 text-dark fw-semibold">Deseja realmente deletar este usuário?</p>
+        <small class="text-muted">Esta ação não pode ser desfeita.</small>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger rounded-pill px-4" onclick="confirmarDeletar()">Deletar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal sucesso deleçao -->
+<div class="modal fade" id="modalDeletado" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header" style="background-color: darkred;">
+        <h5 class="modal-title text-white fw-bold">Usuário Removido</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body text-center py-4">
+        <p class="mb-0 text-dark fw-semibold">Usuário deletado com sucesso.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal erro ao deletar -->
+<div class="modal fade" id="modalErroDeletar" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title fw-bold">Erro</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body text-center py-4">
+        <p class="mb-0 text-dark fw-semibold">Erro ao deletar usuário. Tente novamente.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+
+
+    document.addEventListener('DOMContentLoaded', carregarUsuarios);
+
+    async function carregarUsuarios() {
+            if (sessionStorage.getItem("cargo") !== "admin"){
+        window.location.href = "../caronas/logado_home.html";
+    }
+        const resp = await fetch('../../api/usuario.php');
+        const usuarios = await resp.json();
+        const container = document.getElementById('tbody-usuarios');
+        container.innerHTML = "";
+
+        if (usuarios.length === 0) {
+            container.innerHTML = "<tr><td colspan='7' class='text-center'>Nenhum usuário encontrado.</td></tr>";
+            return;
+        }
+
+        usuarios.forEach(u => {
+            container.innerHTML += `
+                <tr>
+                    <td>${u.id}</td>
+                    <td><span class="fw-bold">${u.nome}</span></td>
+                    <td><small>${u.email}</small></td>
+                    <td><span class="badge bg-secondary rounded-pill">${u.cargo}</span></td>
+                    <td><span class="badge ${u.status === 'aprovado' ? 'bg-success' : u.status === 'espera' ? 'bg-warning' : 'bg-danger'} rounded-pill">${u.status}</span></td>
+                    <td>
+                        ${u.doc ? `<img src="${u.doc}" class="img-doc" onclick="window.open('${u.doc}', '_blank')">` : '---'}
+                    </td>
+                    <td class="text-center">
+                        <div class="d-flex gap-1 justify-content-center">
+                            ${u.status === 'espera' ? `<button class="btn btn-success btn-sm rounded-pill px-3" onclick="aprovar(${u.id})">Aprovar</button>` : ''}
+                            <a href="../usuario/alterar_usuario.html?id=${u.id}" class="btn btn-primary btn-sm rounded-pill px-3">Editar</a>
+                            <button class="btn btn-outline-danger btn-sm rounded-pill px-2" onclick="deletar(${u.id})" title="Deletar">✖</button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    async function aprovar(id) {
+        const resp = await fetch('../../api/usuario.php?action=aprovar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_usuario: id })
+        });
+        const result = await resp.json();
+        if(result.message === "sucesso") {
+            new bootstrap.Modal(document.getElementById('modalAprovado')).show();
+            carregarUsuarios();
+        }
+    }
+
+    async function rejeitar(id) {
+        // Função mantida caso queira apenas mudar status para reprovado
+    }
+
+    let _idParaDeletar = null;
+
+    function deletar(id) {
+        _idParaDeletar = id;
+        new bootstrap.Modal(document.getElementById('modalConfirmarDeletar')).show();
+    }
+
+    async function confirmarDeletar() {
+        bootstrap.Modal.getInstance(document.getElementById('modalConfirmarDeletar')).hide();
+        const resp = await fetch(`../../api/usuario.php?id=${_idParaDeletar}`, {
+            method: 'DELETE'
+        });
+        const result = await resp.json();
+        if(result.message === "Usuário deletado com sucesso") {
+            new bootstrap.Modal(document.getElementById('modalDeletado')).show();
+            carregarUsuarios();
+        } else {
+            new bootstrap.Modal(document.getElementById('modalErroDeletar')).show();
+        }
+        _idParaDeletar = null;
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../timeout/session-timeout.js"></script>
+</body>
+</html>

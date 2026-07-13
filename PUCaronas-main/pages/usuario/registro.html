@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <style>
+
+        body {
+            background: linear-gradient(135deg, #8b0000 0%, #2b0000 100%);
+            background-attachment: fixed;
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+        }
+
+        .form-control {
+            border-radius: 50px;
+            
+
+            
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            padding: 3rem;
+            width: 100%;
+            max-width: 450px;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .btn-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .btn-primary {
+            background: darkred;
+            color: white;
+            border-radius: 50px;
+            font-weight: 600;
+            padding: 0.8rem;
+            transition: 0.3s;
+            border: none;
+        }
+
+        .btn-secondary{
+            background: rgb(91, 91, 91);
+            color: white;
+            border-radius: 50px;
+            font-weight: 600;
+            padding: 0.8rem;
+            transition: 0.3s;
+            border: none;
+        }
+
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg" style="background-color: darkred;">
+  <a class="navbar-brand text-white" style="color: white;" href="#">PUCaronas</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link text-white" href="../home.html">Home</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" href="../caronas/caronas.html">Caronas</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link text-white" href="login.html">Log in</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link text-white" href="registro.html">Registrar-se <span class="sr-only">(current)</span></a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 90vh;">
+    <div class="card">
+        <h3 class="text-center mb-4">Registro</h3>
+        <form>
+            <div class="form-group">
+                <label for="nome">Nome:</label>
+                <input type="text" class="form-control" name="nome" id="nome" placeholder="Digite seu nome: ">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" class="form-control" name="email" id="email" placeholder="seuemail@pucpr.edu.br">
+            </div>
+            <div class="form-group">
+                <label for="senha_hash">Senha:</label>
+                <input type="password" class="form-control" name="senha" id="senha_hash" placeholder="Digite sua senha: ">
+            </div>
+            <div class="form-group">
+                <label for="data_nasc">Data de Nascimento:</label>
+                <input type="text" class="form-control" name="data_nasc" id="data_nasc" placeholder="dd/mm/aaaa" maxlength="10" inputmode="numeric">
+            </div>
+            <div class="form-group">
+                <label for="cargos">Cargo:</label>
+                <select class="form-control" name="cargos" id="cargos">
+                  <option value="passageiro" name="passageiro" id="passageiro">Passageiro</option>
+                  <option value="motorista" name="motorista" id="motorista">Motorista</option>
+                </select>
+            </div>
+            
+<div id="docField" style="display: none;">
+    <div class="form-group">
+        <label for="doc">Documentação (crachá e CNH):</label>
+        <input type="file" class="form-control" id="docFile" accept="image/*,.pdf">
+        <small class="text-muted">Envie uma foto ou PDF do seu crachá e CNH</small>
+        <div id="uploadStatus" class="mt-1"></div>
+    </div>
+</div>
+            <button type="button" id="btn" class="btn btn-primary btn-block">Enviar</button>
+            <h1 id="resultado" class="text-center mt-3" style="font-size:1.2rem;"></h1>
+            <button type="button" class="btn btn-secondary btn-block mt-2">
+                <a href="login.html" class="btn-block" style="color:inherit">Log in</a>
+            </button>
+        </form>
+    </div>
+</div>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+
+        async function dormir(ms){
+            return new Promise(resolve => setTimeout(resolve, ms))
+        }
+        btn = document.getElementById("btn");
+        btn.addEventListener('click', enviar);
+
+         // js para mostrar o campo de link da documentaçao somente para motoristas
+        const selectCargo = document.getElementById('cargos');
+        const docField = document.getElementById('docField');
+
+        selectCargo.addEventListener('change', function () {
+            if (selectCargo.value === 'motorista') {
+                docField.style.display = 'block';
+            } else {
+                docField.style.display = 'none';
+            }
+        });
+
+        document.getElementById('data_nasc').addEventListener('input', function (e) {
+            let v = e.target.value.replace(/\D/g, '').substring(0, 8);
+            if (v.length >= 5) v = v.substring(0, 2) + '/' + v.substring(2, 4) + '/' + v.substring(4);
+            else if (v.length >= 3) v = v.substring(0, 2) + '/' + v.substring(2);
+            e.target.value = v;
+        });
+
+        async function enviar() {
+        try {
+        const nome = document.getElementById('nome').value;
+        const email = document.getElementById('email').value;
+        const senha_hash = document.getElementById('senha_hash').value;
+        const data_nasc_input = document.getElementById('data_nasc').value;
+        const [dia, mes, ano] = data_nasc_input.split('/');
+        const data_nasc = `${ano}-${mes}-${dia}`;
+        const cargo = document.getElementById('cargos').value;
+        const resultado = document.getElementById('resultado');
+
+        const dominioPermitido = '@pucpr.edu.br'; 
+            
+
+        if (!email.endsWith(dominioPermitido)) {
+            resultado.innerHTML = `E-mail inválido! Apenas e-mails do domínio <strong>${dominioPermitido}</strong> são permitidos.`;
+            await dormir(1000);
+            resultado.innerHTML = "";
+            return;
+        }
+
+        const checkEmail = await fetch(`../../api/usuario.php?email=${encodeURIComponent(email)}`);
+        const emailData = await checkEmail.json();
+        if (emailData && emailData.email) {
+            resultado.innerHTML = "Este e-mail já está cadastrado!";
+            await dormir(2000);
+            resultado.innerHTML = "";
+            return;
+        }
+
+        if (senha_hash.length < 8) {
+            resultado.innerHTML = "A senha deve ter no mínimo 8 caracteres!";
+            await dormir(2000);
+            resultado.innerHTML = "";
+            return;
+        }
+
+        
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0); 
+        const nascimento = new Date(data_nasc);
+        if (nascimento > hoje) {
+            resultado.innerHTML = "A data de nascimento não pode ser uma data futura!";
+            return;
+        }
+
+        let docUrl = '';
+        if (cargo === 'motorista') {
+            const file = document.getElementById('docFile').files[0];
+            if (!file) {
+                resultado.innerHTML = "Motorista deve enviar a documentação!";
+                return;
+            }
+            document.getElementById('uploadStatus').innerHTML =
+                '<small class="text-info">Enviando documento...</small>';
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', 'docmotorista');
+            formData.append('folder', 'pucaronas/docs');
+            const uploadRes = await fetch(
+                'https://api.cloudinary.com/v1_1/dwisfepyr/auto/upload',
+                { method: 'POST', body: formData }
+            );
+            const uploadData = await uploadRes.json();
+            if (!uploadData.secure_url) {
+                resultado.innerHTML = "Erro ao enviar documento. Tente novamente.";
+                return;
+            }
+            docUrl = uploadData.secure_url;
+            document.getElementById('uploadStatus').innerHTML =
+                '<small class="text-success">Documento enviado!</small>';
+        }
+
+        let requisicao = await fetch('../../api/usuario.php?action=cadastro', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nome, email, senha_hash, data_nasc, cargo, doc:docUrl })
+        });
+
+        const resposta = await requisicao.json();
+        console.log("Resposta:", resposta);
+
+        if (resposta.message) {
+            sessionStorage.setItem("nome", nome);
+            window.location.href = 'login.html';
+            resultado.innerHTML = "Usuário adicionado com sucesso!!";
+            // await dormir(1000);
+        }
+    } catch (err) {
+        console.log("erro é:" + err);
+        resultado.innerHTML = "Dados inválidos!!";
+    }
+}
+
+</script>
+</body>
+</html>
